@@ -83,21 +83,17 @@ body {
     color: var(--text-primary);
 }
 
-/* Header — full-bleed background, centered content */
+/* Header — full-bleed, edge-to-edge content */
 #header {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
     padding: 12px var(--gutter);
-    padding: 12px max(var(--gutter), calc((100% - var(--content-max)) / 2 + var(--gutter)));
 }
 
 .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: var(--content-max);
-    margin: 0 auto;
-    width: 100%;
 }
 
 #header h1 {
@@ -336,5 +332,13 @@ body {
     #input-area {
         padding-top: 16px;
         padding-bottom: 16px;
+    }
+}
+
+/* Wide screens — generous header margins */
+@media (min-width: 1024px) {
+    #header {
+        padding-left: 40px;
+        padding-right: 40px;
     }
 }
