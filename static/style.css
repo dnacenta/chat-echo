@@ -278,7 +278,7 @@ body {
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    align-self: flex-end;
+    align-self: center;
     border-color: rgba(235, 203, 139, 0.4);
     box-shadow: 0 0 8px rgba(235, 203, 139, 0.3), 0 0 2px rgba(235, 203, 139, 0.2);
 }
