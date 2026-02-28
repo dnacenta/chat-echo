@@ -248,7 +248,8 @@ body {
 
 #input {
     flex: 1;
-    padding: 10px 14px;
+    padding: 0 14px;
+    padding-top: 11px;
     border-color: var(--border);
     background: var(--bg-primary);
     color: var(--text-primary);
