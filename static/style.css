@@ -178,12 +178,14 @@ body {
     align-self: flex-start;
     background: var(--bg-message-ai);
     border-bottom-left-radius: 4px;
+    box-shadow: 0 0 8px rgba(67, 76, 94, 0.5);
 }
 
 .message.user {
     align-self: flex-end;
     background: var(--bg-message-user);
     border-bottom-right-radius: 4px;
+    box-shadow: 0 0 8px rgba(94, 129, 172, 0.3);
 }
 
 .message.error {
