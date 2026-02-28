@@ -242,25 +242,21 @@ body {
     font-family: inherit;
     border: 1px solid transparent;
     border-radius: 4px;
-    height: 40px;
     line-height: 1;
 }
 
 #input {
     flex: 1;
     padding: 0 14px;
-    padding-top: 10px;
+    padding-top: 11px;
     border-color: var(--border);
     background: var(--bg-primary);
     color: var(--text-primary);
     resize: none;
     outline: none;
     height: auto;
-    min-height: 40px;
+    min-height: 42px;
     max-height: 120px;
-}
-
-#input {
     box-shadow: 0 0 6px rgba(76, 86, 106, 0.3);
 }
 
@@ -275,6 +271,7 @@ body {
 
 #send {
     padding: 0 20px;
+    height: 40px;
     background: var(--nord13);
     color: var(--nord0);
     font-weight: 600;
@@ -300,6 +297,8 @@ body {
 #send:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    border-color: rgba(76, 86, 106, 0.3);
+    box-shadow: 0 0 6px rgba(76, 86, 106, 0.2);
 }
 
 /* Scrollbar */
