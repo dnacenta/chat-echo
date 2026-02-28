@@ -1,0 +1,18 @@
+[package]
+name = "chat-echo"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+description = "Web chat interface for the Echo ecosystem"
+license = "GPL-3.0"
+
+[dependencies]
+axum = { version = "0.8", features = ["ws"] }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", features = ["json"] }
+tower-http = { version = "0.6", features = ["fs", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+futures-util = "0.3"
