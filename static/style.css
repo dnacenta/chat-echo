@@ -277,10 +277,14 @@ body {
     white-space: nowrap;
     flex-shrink: 0;
     align-self: flex-end;
+    border-color: rgba(235, 203, 139, 0.4);
+    box-shadow: 0 0 8px rgba(235, 203, 139, 0.3), 0 0 2px rgba(235, 203, 139, 0.2);
 }
 
 #send:hover {
     background: var(--nord12);
+    border-color: rgba(208, 135, 112, 0.5);
+    box-shadow: 0 0 12px rgba(208, 135, 112, 0.4), 0 0 3px rgba(208, 135, 112, 0.3);
 }
 
 #send:active {
