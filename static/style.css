@@ -72,20 +72,53 @@ html, body {
 }
 
 #status {
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: var(--text-secondary);
+}
+
+.status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
 }
 
 #status.connected {
     color: var(--success);
 }
 
+#status.connected .status-dot {
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success), 0 0 12px rgba(163, 190, 140, 0.3);
+}
+
 #status.disconnected {
     color: var(--error);
 }
 
+#status.disconnected .status-dot {
+    background: var(--error);
+    box-shadow: 0 0 6px var(--error);
+}
+
 #status.reconnecting {
     color: var(--warning);
+}
+
+#status.reconnecting .status-dot {
+    background: var(--warning);
+    box-shadow: 0 0 6px var(--warning);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
 }
 
 /* Messages */
@@ -190,7 +223,7 @@ html, body {
     min-height: 42px;
     border: none;
     border-radius: 8px;
-    background: var(--accent);
+    background: var(--nord13);
     color: var(--nord0);
     font-size: 14px;
     font-weight: 600;
@@ -200,7 +233,7 @@ html, body {
 }
 
 #send:hover {
-    background: var(--accent-hover);
+    background: var(--nord12);
 }
 
 #send:disabled {
