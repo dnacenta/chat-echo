@@ -240,7 +240,7 @@ body {
     flex: 1;
     padding: 10px 14px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 4px;
     background: var(--bg-primary);
     color: var(--text-primary);
     font-size: 14px;
@@ -263,7 +263,7 @@ body {
     padding: 0 20px;
     min-height: 42px;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     background: var(--nord13);
     color: var(--nord0);
     font-size: 14px;
