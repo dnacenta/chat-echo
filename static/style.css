@@ -260,8 +260,13 @@ body {
     max-height: 120px;
 }
 
+#input {
+    box-shadow: 0 0 6px rgba(76, 86, 106, 0.3);
+}
+
 #input:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(136, 192, 208, 0.3), 0 0 2px rgba(136, 192, 208, 0.2);
 }
 
 #input::placeholder {
