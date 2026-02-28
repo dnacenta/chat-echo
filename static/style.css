@@ -242,21 +242,21 @@ body {
     font-family: inherit;
     border: 1px solid transparent;
     border-radius: 4px;
-    height: 42px;
+    height: 40px;
     line-height: 1;
 }
 
 #input {
     flex: 1;
     padding: 0 14px;
-    padding-top: 11px;
+    padding-top: 10px;
     border-color: var(--border);
     background: var(--bg-primary);
     color: var(--text-primary);
     resize: none;
     outline: none;
     height: auto;
-    min-height: 42px;
+    min-height: 40px;
     max-height: 120px;
 }
 
