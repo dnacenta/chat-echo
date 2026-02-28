@@ -63,6 +63,8 @@
     --error: var(--nord11);
     --success: var(--nord14);
     --warning: var(--nord13);
+
+    --content-max: 800px;
 }
 
 html, body {
@@ -72,31 +74,34 @@ html, body {
     color: var(--text-primary);
 }
 
-#app {
+body {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    max-width: 800px;
-    margin: 0 auto;
 }
 
-/* Header */
+/* Header — full width */
 #header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
+    width: 100%;
     border-bottom: 1px solid var(--border);
     background: var(--bg-secondary);
 }
 
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    max-width: var(--content-max);
+    margin: 0 auto;
+}
+
 #header h1 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 #status {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -145,18 +150,21 @@ html, body {
     50% { opacity: 0.3; }
 }
 
-/* Messages */
+/* Messages — centered, scrollable */
 #messages {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    width: 100%;
 }
 
 .message {
-    max-width: 80%;
+    max-width: 85%;
     padding: 10px 14px;
     border-radius: 12px;
     line-height: 1.5;
@@ -209,14 +217,20 @@ html, body {
     100% { content: ''; }
 }
 
-/* Input area */
+/* Input area — full width */
 #input-area {
+    width: 100%;
+    border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.input-inner {
     display: flex;
     align-items: flex-end;
     gap: 8px;
-    padding: 16px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg-secondary);
+    padding: 12px 16px;
+    max-width: var(--content-max);
+    margin: 0 auto;
 }
 
 #input {
@@ -279,21 +293,30 @@ html, body {
     border-radius: 3px;
 }
 
-/* Mobile */
-@media (max-width: 480px) {
+/* Tablet and up */
+@media (min-width: 481px) {
+    .header-inner {
+        padding: 16px 20px;
+    }
+
+    #header h1 {
+        font-size: 18px;
+    }
+
+    #status {
+        font-size: 11px;
+    }
+
     #messages {
-        padding: 12px;
+        padding: 20px;
+        gap: 12px;
     }
 
     .message {
-        max-width: 90%;
+        max-width: 80%;
     }
 
-    #input-area {
-        padding: 12px;
-    }
-
-    #send {
-        padding: 0 14px;
+    .input-inner {
+        padding: 16px 20px;
     }
 }
