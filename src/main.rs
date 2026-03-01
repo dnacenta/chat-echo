@@ -40,7 +40,7 @@ async fn main() {
     );
 
     let state = AppState {
-        bridge: BridgeClient::new(&config.bridge_url),
+        bridge: BridgeClient::new(&config.bridge_url, config.bridge_secret),
     };
 
     let app = Router::new()
