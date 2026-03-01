@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.80"
 description = "Web chat interface for the Echo ecosystem"
-license = "GPL-3.0"
+license = "AGPL-3.0-only"
 
 [dependencies]
 axum = { version = "0.8", features = ["ws"] }
