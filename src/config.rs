@@ -3,6 +3,7 @@ pub struct Config {
     pub host: String,
     pub port: u16,
     pub bridge_url: String,
+    pub bridge_secret: Option<String>,
     pub static_dir: String,
 }
 
@@ -16,6 +17,7 @@ impl Config {
                 .unwrap_or(8080),
             bridge_url: std::env::var("CHAT_ECHO_BRIDGE_URL")
                 .unwrap_or_else(|_| "http://127.0.0.1:3100".into()),
+            bridge_secret: std::env::var("CHAT_ECHO_BRIDGE_SECRET").ok(),
             static_dir: std::env::var("CHAT_ECHO_STATIC_DIR").unwrap_or_else(|_| "./static".into()),
         }
     }
