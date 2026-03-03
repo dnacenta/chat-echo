@@ -1,25 +1,7 @@
-mod bridge;
-mod config;
-mod ws;
-
-use std::net::SocketAddr;
-
-use axum::extract::{State, WebSocketUpgrade};
-use axum::response::IntoResponse;
-use axum::routing::get;
-use axum::Router;
-use tower_http::services::ServeDir;
-use tower_http::trace::TraceLayer;
-
-use bridge::BridgeClient;
-use config::Config;
+use chat_echo::config::Config;
+use chat_echo::ChatEcho;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-#[derive(Clone)]
-struct AppState {
-    bridge: BridgeClient,
-}
 
 #[tokio::main]
 async fn main() {
@@ -39,34 +21,10 @@ async fn main() {
         "Starting chat-echo"
     );
 
-    let state = AppState {
-        bridge: BridgeClient::new(&config.bridge_url),
-    };
+    let mut chat = ChatEcho::new(config);
 
-    let app = Router::new()
-        .route("/ws", get(ws_handler))
-        .route("/health", get(health))
-        .fallback_service(ServeDir::new(&config.static_dir))
-        .layer(TraceLayer::new_for_http())
-        .with_state(state);
-
-    let addr: SocketAddr = format!("{}:{}", config.host, config.port)
-        .parse()
-        .expect("Invalid address");
-
-    tracing::info!(%addr, "Listening");
-
-    let listener = tokio::net::TcpListener::bind(addr)
-        .await
-        .expect("Failed to bind");
-
-    axum::serve(listener, app).await.expect("Server error");
-}
-
-async fn ws_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| ws::handle_socket(socket, state.bridge))
-}
-
-async fn health() -> &'static str {
-    "ok"
+    if let Err(e) = chat.start().await {
+        tracing::error!("Server error: {e}");
+        std::process::exit(1);
+    }
 }

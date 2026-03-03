@@ -132,6 +132,7 @@ name = "chat-echo"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "echo-system-types",
  "futures-util",
  "reqwest",
  "serde",
@@ -212,6 +213,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "echo-system-types"
+version = "0.2.0"
+source = "git+https://github.com/dnacenta/echo-system-types?tag=v0.2.0#acbadc847e4af646025d67b968330c07083a0d96"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

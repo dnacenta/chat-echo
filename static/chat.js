@@ -61,11 +61,11 @@
   function setStatus(state) {
     statusEl.className = state;
     if (state === "connected") {
-      statusEl.textContent = "connected";
+      statusEl.innerHTML = '<span class="status-dot"></span>connected';
     } else if (state === "reconnecting") {
-      statusEl.textContent = "reconnecting...";
+      statusEl.innerHTML = '<span class="status-dot"></span>reconnecting';
     } else {
-      statusEl.textContent = "disconnected";
+      statusEl.innerHTML = '<span class="status-dot"></span>disconnected';
     }
   }
 

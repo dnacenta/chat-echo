@@ -1,3 +1,27 @@
+@font-face {
+    font-family: '0xProto';
+    src: url('/fonts/0xProto-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: '0xProto';
+    src: url('/fonts/0xProto-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: '0xProto';
+    src: url('/fonts/0xProto-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,76 +29,143 @@
 }
 
 :root {
-    --bg-primary: #0d1117;
-    --bg-secondary: #161b22;
-    --bg-message-ai: #1c2333;
-    --bg-message-user: #1a3a5c;
-    --text-primary: #e6edf3;
-    --text-secondary: #8b949e;
-    --accent: #58a6ff;
-    --border: #30363d;
-    --error: #f85149;
+    /* Nord Polar Night */
+    --nord0: #2E3440;
+    --nord1: #3B4252;
+    --nord2: #434C5E;
+    --nord3: #4C566A;
+    /* Nord Snow Storm */
+    --nord4: #D8DEE9;
+    --nord5: #E5E9F0;
+    --nord6: #ECEFF4;
+    /* Nord Frost */
+    --nord7: #8FBCBB;
+    --nord8: #88C0D0;
+    --nord9: #81A1C1;
+    --nord10: #5E81AC;
+    /* Nord Aurora */
+    --nord11: #BF616A;
+    --nord12: #D08770;
+    --nord13: #EBCB8B;
+    --nord14: #A3BE8C;
+    --nord15: #B48EAD;
+
+    /* Semantic mappings */
+    --bg-primary: var(--nord0);
+    --bg-secondary: var(--nord1);
+    --bg-message-ai: var(--nord2);
+    --bg-message-user: var(--nord10);
+    --text-primary: var(--nord6);
+    --text-secondary: var(--nord4);
+    --accent: var(--nord8);
+    --accent-hover: var(--nord9);
+    --border: var(--nord3);
+    --error: var(--nord11);
+    --success: var(--nord14);
+    --warning: var(--nord13);
+
+    --content-max: 800px;
+    --gutter: 16px;
 }
 
-html, body {
+html {
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    font-family: '0xProto', 'Fira Code', 'JetBrains Mono', monospace;
     background: var(--bg-primary);
     color: var(--text-primary);
 }
 
-#app {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    max-width: 800px;
-    margin: 0 auto;
+/* Header — full-bleed, edge-to-edge content */
+#header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 12px var(--gutter);
 }
 
-/* Header */
-#header {
+.header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-secondary);
 }
 
 #header h1 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 #status {
-    font-size: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: var(--text-secondary);
 }
 
+.status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
 #status.connected {
-    color: #3fb950;
+    color: var(--success);
+}
+
+#status.connected .status-dot {
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success), 0 0 12px rgba(163, 190, 140, 0.3);
 }
 
 #status.disconnected {
     color: var(--error);
 }
 
-#status.reconnecting {
-    color: #d29922;
+#status.disconnected .status-dot {
+    background: var(--error);
+    box-shadow: 0 0 6px var(--error);
 }
 
-/* Messages */
+#status.reconnecting {
+    color: var(--warning);
+}
+
+#status.reconnecting .status-dot {
+    background: var(--warning);
+    box-shadow: 0 0 6px var(--warning);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Messages — scrollable middle, centered content */
 #messages {
-    flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    padding: var(--gutter);
+    padding-left: max(var(--gutter), calc((100vw - var(--content-max)) / 2 + var(--gutter)));
+    padding-right: max(var(--gutter), calc((100vw - var(--content-max)) / 2 + var(--gutter)));
 }
 
 .message {
-    max-width: 80%;
+    max-width: 85%;
     padding: 10px 14px;
     border-radius: 12px;
     line-height: 1.5;
@@ -87,12 +178,14 @@ html, body {
     align-self: flex-start;
     background: var(--bg-message-ai);
     border-bottom-left-radius: 4px;
+    box-shadow: 0 0 8px rgba(67, 76, 94, 0.5);
 }
 
 .message.user {
     align-self: flex-end;
     background: var(--bg-message-user);
     border-bottom-right-radius: 4px;
+    box-shadow: 0 0 8px rgba(94, 129, 172, 0.3);
 }
 
 .message.error {
@@ -127,57 +220,87 @@ html, body {
     100% { content: ''; }
 }
 
-/* Input area */
+/* Input area — full-bleed background, centered content */
 #input-area {
-    display: flex;
-    gap: 8px;
-    padding: 16px 20px;
-    border-top: 1px solid var(--border);
     background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    padding: 12px var(--gutter);
+    padding: 12px max(var(--gutter), calc((100% - var(--content-max)) / 2 + var(--gutter)));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.input-inner {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    width: 100%;
+}
+
+#input,
+#send {
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    line-height: 1;
 }
 
 #input {
     flex: 1;
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    padding: 0 14px;
+    padding-top: 11px;
+    border-color: var(--border);
     background: var(--bg-primary);
     color: var(--text-primary);
-    font-size: 14px;
-    font-family: inherit;
     resize: none;
     outline: none;
+    height: auto;
     min-height: 42px;
     max-height: 120px;
+    box-shadow: 0 0 6px rgba(76, 86, 106, 0.3);
 }
 
 #input:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(136, 192, 208, 0.3), 0 0 2px rgba(136, 192, 208, 0.2);
 }
 
 #input::placeholder {
-    color: var(--text-secondary);
+    color: var(--nord3);
 }
 
 #send {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    background: var(--accent);
-    color: #fff;
-    font-size: 14px;
+    padding: 0 20px;
+    height: 40px;
+    background: var(--nord13);
+    color: var(--nord0);
     font-weight: 600;
     cursor: pointer;
-    align-self: flex-end;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: center;
+    border-color: rgba(235, 203, 139, 0.4);
+    box-shadow: 0 0 8px rgba(235, 203, 139, 0.3), 0 0 2px rgba(235, 203, 139, 0.2);
 }
 
 #send:hover {
-    opacity: 0.9;
+    background: var(--nord12);
+    border-color: rgba(208, 135, 112, 0.5);
+    box-shadow: 0 0 12px rgba(208, 135, 112, 0.4), 0 0 3px rgba(208, 135, 112, 0.3);
+}
+
+#send:active {
+    background: var(--nord12);
+    transform: scale(0.97);
 }
 
 #send:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    border-color: rgba(76, 86, 106, 0.3);
+    box-shadow: 0 0 6px rgba(76, 86, 106, 0.2);
 }
 
 /* Scrollbar */
@@ -192,4 +315,45 @@ html, body {
 #messages::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: 3px;
+}
+
+/* Tablet and up */
+@media (min-width: 481px) {
+    :root {
+        --gutter: 20px;
+    }
+
+    #header {
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+
+    #header h1 {
+        font-size: 18px;
+    }
+
+    #status {
+        font-size: 11px;
+    }
+
+    #messages {
+        gap: 12px;
+    }
+
+    .message {
+        max-width: 80%;
+    }
+
+    #input-area {
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+}
+
+/* Wide screens — generous header margins */
+@media (min-width: 1024px) {
+    #header {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
 }
