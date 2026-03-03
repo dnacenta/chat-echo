@@ -2,7 +2,7 @@
 //!
 //! Provides a WebSocket-based chat relay between a browser frontend and
 //! a backend LLM service (via bridge-echo). Includes a Nord-themed
-//! responsive web UI served as static assets.
+//! responsive web UI with assets embedded in the binary.
 //!
 //! # Usage as a library
 //!
@@ -21,9 +21,11 @@ pub mod config;
 pub mod ws;
 
 use std::net::SocketAddr;
+use std::path::Path;
 
 use axum::extract::{State, WebSocketUpgrade};
-use axum::response::IntoResponse;
+use axum::http::{header, StatusCode};
+use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
 use axum::Router;
 use echo_system_types::{HealthStatus, SetupPrompt};
@@ -32,6 +34,14 @@ use tower_http::trace::TraceLayer;
 
 use bridge::BridgeClient;
 use config::Config;
+
+// Embed static assets at compile time so the binary is self-contained.
+const EMBEDDED_HTML: &str = include_str!("../static/index.html");
+const EMBEDDED_JS: &str = include_str!("../static/chat.js");
+const EMBEDDED_CSS: &str = include_str!("../static/style.css");
+const EMBEDDED_FONT_REGULAR: &[u8] = include_bytes!("../static/fonts/0xProto-Regular.woff2");
+const EMBEDDED_FONT_BOLD: &[u8] = include_bytes!("../static/fonts/0xProto-Bold.woff2");
+const EMBEDDED_FONT_ITALIC: &[u8] = include_bytes!("../static/fonts/0xProto-Italic.woff2");
 
 /// Shared application state accessible from all handlers.
 #[derive(Clone)]
@@ -128,23 +138,28 @@ impl ChatEcho {
                 secret: true,
                 default: None,
             },
-            SetupPrompt {
-                key: "static_dir".into(),
-                question: "Static assets directory:".into(),
-                required: false,
-                secret: false,
-                default: Some("./static".into()),
-            },
         ]
     }
 
     fn build_router(&self, state: AppState) -> Router<()> {
-        Router::new()
+        let router = Router::new()
             .route("/ws", get(ws_handler))
             .route("/health", get(health_handler))
-            .fallback_service(ServeDir::new(&self.config.static_dir))
-            .layer(TraceLayer::new_for_http())
-            .with_state(state)
+            .route("/chat.js", get(serve_js))
+            .route("/style.css", get(serve_css))
+            .route("/fonts/0xProto-Regular.woff2", get(serve_font_regular))
+            .route("/fonts/0xProto-Bold.woff2", get(serve_font_bold))
+            .route("/fonts/0xProto-Italic.woff2", get(serve_font_italic));
+
+        // If static_dir exists on disk, use it as fallback (allows overrides).
+        // Otherwise, serve embedded index.html for all unmatched routes.
+        let router = if Path::new(&self.config.static_dir).is_dir() {
+            router.fallback_service(ServeDir::new(&self.config.static_dir))
+        } else {
+            router.fallback(serve_index)
+        };
+
+        router.layer(TraceLayer::new_for_http()).with_state(state)
     }
 }
 
@@ -154,4 +169,53 @@ async fn ws_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> impl
 
 async fn health_handler() -> &'static str {
     "ok"
+}
+
+async fn serve_index() -> Html<&'static str> {
+    Html(EMBEDDED_HTML)
+}
+
+async fn serve_js() -> Response {
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "application/javascript")],
+        EMBEDDED_JS,
+    )
+        .into_response()
+}
+
+async fn serve_css() -> Response {
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "text/css")],
+        EMBEDDED_CSS,
+    )
+        .into_response()
+}
+
+async fn serve_font_regular() -> Response {
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "font/woff2")],
+        EMBEDDED_FONT_REGULAR,
+    )
+        .into_response()
+}
+
+async fn serve_font_bold() -> Response {
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "font/woff2")],
+        EMBEDDED_FONT_BOLD,
+    )
+        .into_response()
+}
+
+async fn serve_font_italic() -> Response {
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "font/woff2")],
+        EMBEDDED_FONT_ITALIC,
+    )
+        .into_response()
 }
