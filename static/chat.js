@@ -97,8 +97,21 @@
       }
     }
 
-    dashboardEl.innerHTML = '<pre class="dash-pre">' + lines.join('\n') + '</pre>';
+    // Boot animation — type in line by line
     dashboardEl.style.display = '';
+    var pre = document.createElement('pre');
+    pre.className = 'dash-pre';
+    dashboardEl.innerHTML = '';
+    dashboardEl.appendChild(pre);
+    animateLines(pre, lines, 0);
+  }
+
+  function animateLines(pre, lines, idx) {
+    if (idx >= lines.length) return;
+    if (idx > 0) pre.innerHTML += '\n';
+    pre.innerHTML += lines[idx];
+    scrollToBottom();
+    setTimeout(function () { animateLines(pre, lines, idx + 1); }, 40);
   }
 
   function pipelineLine(name, doc) {
