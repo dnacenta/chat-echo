@@ -145,6 +145,7 @@ impl ChatEcho {
         let router = Router::new()
             .route("/ws", get(ws_handler))
             .route("/health", get(health_handler))
+            .route("/api/dashboard", get(dashboard_proxy))
             .route("/chat.js", get(serve_js))
             .route("/style.css", get(serve_css))
             .route("/fonts/0xProto-Regular.woff2", get(serve_font_regular))
@@ -169,6 +170,18 @@ async fn ws_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> impl
 
 async fn health_handler() -> &'static str {
     "ok"
+}
+
+async fn dashboard_proxy(State(state): State<AppState>) -> Response {
+    match state.bridge.dashboard().await {
+        Ok(json) => (
+            StatusCode::OK,
+            [(header::CONTENT_TYPE, "application/json")],
+            json,
+        )
+            .into_response(),
+        Err(_) => StatusCode::SERVICE_UNAVAILABLE.into_response(),
+    }
 }
 
 async fn serve_index() -> Html<&'static str> {

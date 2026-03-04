@@ -17,17 +17,43 @@ struct ChatResponse {
 #[derive(Clone)]
 pub struct BridgeClient {
     client: Client,
+    base_url: String,
     url: String,
     secret: Option<String>,
 }
 
 impl BridgeClient {
     pub fn new(bridge_url: &str, secret: Option<String>) -> Self {
+        let base = bridge_url.trim_end_matches('/').to_string();
         Self {
             client: Client::new(),
-            url: format!("{}/chat", bridge_url.trim_end_matches('/')),
+            url: format!("{}/chat", base),
+            base_url: base,
             secret,
         }
+    }
+
+    /// Fetch the dashboard JSON from the backend.
+    pub async fn dashboard(&self) -> Result<String, String> {
+        let url = format!("{}/api/dashboard", self.base_url);
+        let mut http_req = self.client.get(&url);
+
+        if let Some(secret) = &self.secret {
+            http_req = http_req.header("X-Echo-Secret", secret);
+        }
+
+        let resp = http_req
+            .send()
+            .await
+            .map_err(|e| format!("backend unreachable: {e}"))?;
+
+        if !resp.status().is_success() {
+            return Err(format!("backend returned {}", resp.status()));
+        }
+
+        resp.text()
+            .await
+            .map_err(|e| format!("invalid response: {e}"))
     }
 
     /// Send a message to the backend and return the response text.
