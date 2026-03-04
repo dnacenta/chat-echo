@@ -303,6 +303,37 @@ body {
     box-shadow: 0 0 6px rgba(76, 86, 106, 0.2);
 }
 
+/* Dashboard terminal banner */
+#dashboard {
+    align-self: stretch;
+    max-width: 100%;
+    margin-bottom: 8px;
+}
+
+.dash-pre {
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.6;
+    background: var(--nord1);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    white-space: pre;
+    color: var(--text-secondary);
+}
+
+.dash-green { color: var(--success); }
+.dash-yellow { color: var(--warning); }
+.dash-red { color: var(--error); font-weight: 700; }
+.dash-dim { opacity: 0.5; }
+.dash-warning { color: var(--warning); }
+
+.dash-healthy { color: var(--success); font-weight: 700; }
+.dash-watch { color: var(--warning); font-weight: 700; }
+.dash-concern { color: var(--warning); font-weight: 700; }
+.dash-alert { color: var(--error); font-weight: 700; }
+
 /* Scrollbar */
 #messages::-webkit-scrollbar {
     width: 6px;
