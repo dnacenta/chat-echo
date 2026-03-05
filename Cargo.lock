@@ -129,7 +129,7 @@ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
 name = "chat-echo"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "axum",
  "echo-system-types",
@@ -217,8 +217,8 @@ dependencies = [
 
 [[package]]
 name = "echo-system-types"
-version = "0.2.0"
-source = "git+https://github.com/dnacenta/echo-system-types?tag=v0.2.0#acbadc847e4af646025d67b968330c07083a0d96"
+version = "0.3.0"
+source = "git+https://github.com/dnacenta/echo-system-types?tag=v0.3.0#ad901031f50fe6f0bef5a9476bbc97a778d00124"
 dependencies = [
  "serde",
  "serde_json",
