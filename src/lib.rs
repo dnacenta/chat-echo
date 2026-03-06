@@ -20,15 +20,19 @@ pub mod bridge;
 pub mod config;
 pub mod ws;
 
+use std::any::Any;
+use std::future::Future;
 use std::net::SocketAddr;
 use std::path::Path;
+use std::pin::Pin;
 
 use axum::extract::{State, WebSocketUpgrade};
 use axum::http::{header, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
 use axum::Router;
-use echo_system_types::{HealthStatus, SetupPrompt};
+use echo_system_types::plugin::{Plugin, PluginContext, PluginResult, PluginRole};
+use echo_system_types::{HealthStatus, PluginMeta, SetupPrompt};
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
 
@@ -66,46 +70,8 @@ impl ChatEcho {
         }
     }
 
-    /// Start the chat server. Builds state, binds the listener, and serves.
-    pub async fn start(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        let state = AppState {
-            bridge: BridgeClient::new(&self.config.bridge_url, self.config.bridge_secret.clone()),
-        };
-
-        let app = self.build_router(state);
-
-        let addr: SocketAddr = format!("{}:{}", self.config.host, self.config.port)
-            .parse()
-            .map_err(|e| format!("Invalid address: {e}"))?;
-
-        tracing::info!(%addr, "Listening");
-
-        let listener = tokio::net::TcpListener::bind(addr).await?;
-
-        let (shutdown_tx, shutdown_rx) = tokio::sync::oneshot::channel::<()>();
-        self.shutdown_tx = Some(shutdown_tx);
-        self.started = true;
-
-        axum::serve(listener, app)
-            .with_graceful_shutdown(async {
-                let _ = shutdown_rx.await;
-            })
-            .await?;
-
-        Ok(())
-    }
-
-    /// Stop the chat server gracefully.
-    pub async fn stop(&mut self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(tx) = self.shutdown_tx.take() {
-            let _ = tx.send(());
-        }
-        self.started = false;
-        Ok(())
-    }
-
     /// Report health status.
-    pub fn health(&self) -> HealthStatus {
+    fn health_check(&self) -> HealthStatus {
         if self.started {
             HealthStatus::Healthy
         } else {
@@ -122,7 +88,7 @@ impl ChatEcho {
     }
 
     /// Configuration prompts for the echo-system init wizard.
-    pub fn setup_prompts() -> Vec<SetupPrompt> {
+    fn get_setup_prompts() -> Vec<SetupPrompt> {
         vec![
             SetupPrompt {
                 key: "bridge_url".into(),
@@ -161,6 +127,83 @@ impl ChatEcho {
         };
 
         router.layer(TraceLayer::new_for_http()).with_state(state)
+    }
+}
+
+/// Factory function — creates a fully initialized chat-echo plugin.
+pub async fn create(
+    config: &serde_json::Value,
+    _ctx: &PluginContext,
+) -> Result<Box<dyn Plugin>, Box<dyn std::error::Error + Send + Sync>> {
+    Ok(Box::new(ChatEcho::new(Config::from_json(config))))
+}
+
+impl Plugin for ChatEcho {
+    fn meta(&self) -> PluginMeta {
+        PluginMeta {
+            name: "chat-echo".into(),
+            version: env!("CARGO_PKG_VERSION").into(),
+            description: "Web chat UI for pulse-null".into(),
+        }
+    }
+
+    fn role(&self) -> PluginRole {
+        PluginRole::Interface
+    }
+
+    fn start(&mut self) -> PluginResult<'_> {
+        Box::pin(async move {
+            let state = AppState {
+                bridge: BridgeClient::new(
+                    &self.config.bridge_url,
+                    self.config.bridge_secret.clone(),
+                ),
+            };
+
+            let app = self.build_router(state);
+
+            let addr: SocketAddr = format!("{}:{}", self.config.host, self.config.port)
+                .parse()
+                .map_err(|e| format!("Invalid address: {e}"))?;
+
+            tracing::info!(%addr, "Listening");
+
+            let listener = tokio::net::TcpListener::bind(addr).await?;
+
+            let (shutdown_tx, shutdown_rx) = tokio::sync::oneshot::channel::<()>();
+            self.shutdown_tx = Some(shutdown_tx);
+            self.started = true;
+
+            axum::serve(listener, app)
+                .with_graceful_shutdown(async {
+                    let _ = shutdown_rx.await;
+                })
+                .await?;
+
+            Ok(())
+        })
+    }
+
+    fn stop(&mut self) -> PluginResult<'_> {
+        Box::pin(async move {
+            if let Some(tx) = self.shutdown_tx.take() {
+                let _ = tx.send(());
+            }
+            self.started = false;
+            Ok(())
+        })
+    }
+
+    fn health(&self) -> Pin<Box<dyn Future<Output = HealthStatus> + Send + '_>> {
+        Box::pin(async move { self.health_check() })
+    }
+
+    fn setup_prompts(&self) -> Vec<SetupPrompt> {
+        Self::get_setup_prompts()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }
 

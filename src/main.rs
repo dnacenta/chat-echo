@@ -1,5 +1,6 @@
 use chat_echo::config::Config;
 use chat_echo::ChatEcho;
+use echo_system_types::plugin::Plugin;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
