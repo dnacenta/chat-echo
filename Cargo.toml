@@ -7,7 +7,7 @@ description = "Web chat interface for the Echo ecosystem"
 license = "AGPL-3.0-only"
 
 [dependencies]
-echo-system-types = { git = "https://github.com/dnacenta/echo-system-types", branch = "feat/v0.4.0-plugin-trait" }
+echo-system-types = { git = "https://github.com/dnacenta/echo-system-types", branch = "main" }
 axum = { version = "0.8", features = ["ws"] }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
