@@ -132,8 +132,8 @@ name = "chat-echo"
 version = "0.2.2"
 dependencies = [
  "axum",
- "echo-system-types",
  "futures-util",
+ "pulse-system-types",
  "reqwest",
  "serde",
  "serde_json",
@@ -213,15 +213,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "echo-system-types"
-version = "0.3.0"
-source = "git+https://github.com/dnacenta/echo-system-types?tag=v0.3.0#ad901031f50fe6f0bef5a9476bbc97a778d00124"
-dependencies = [
- "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -969,6 +960,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "pulse-system-types"
+version = "0.5.0"
+source = "git+https://github.com/dnacenta/pulse-null-types?branch=main#d99698ed694270610ccb45ce5b3b17ab59f8bf8a"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

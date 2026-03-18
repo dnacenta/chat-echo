@@ -31,8 +31,8 @@ use axum::http::{header, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
 use axum::Router;
-use echo_system_types::plugin::{Plugin, PluginContext, PluginResult, PluginRole};
-use echo_system_types::{HealthStatus, PluginMeta, SetupPrompt};
+use pulse_system_types::plugin::{Plugin, PluginContext, PluginResult, PluginRole};
+use pulse_system_types::{HealthStatus, PluginMeta, SetupPrompt};
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
 
@@ -174,11 +174,18 @@ impl Plugin for ChatEcho {
             self.shutdown_tx = Some(shutdown_tx);
             self.started = true;
 
-            axum::serve(listener, app)
-                .with_graceful_shutdown(async {
-                    let _ = shutdown_rx.await;
-                })
-                .await?;
+            // Spawn into background so start() returns immediately
+            // and doesn't block other plugins from starting.
+            tokio::spawn(async move {
+                if let Err(e) = axum::serve(listener, app)
+                    .with_graceful_shutdown(async {
+                        let _ = shutdown_rx.await;
+                    })
+                    .await
+                {
+                    tracing::error!("chat-echo server error: {e}");
+                }
+            });
 
             Ok(())
         })
