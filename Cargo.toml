@@ -5,9 +5,14 @@ edition = "2021"
 rust-version = "1.80"
 description = "Web chat interface for the Echo ecosystem"
 license = "AGPL-3.0-only"
+repository = "https://github.com/dnacenta/chat-echo"
+keywords = ["ai", "chat", "websocket", "entity", "llm"]
+categories = ["web-programming"]
+authors = ["dnacenta"]
+readme = "README.md"
 
 [dependencies]
-pulse-system-types = { git = "https://github.com/dnacenta/pulse-null-types", branch = "main" }
+pulse-system-types = "0.5"
 axum = { version = "0.8", features = ["ws"] }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
